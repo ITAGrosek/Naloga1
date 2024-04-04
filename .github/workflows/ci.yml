@@ -48,4 +48,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/your-app-name:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ITA1:latest
