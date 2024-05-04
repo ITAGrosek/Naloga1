@@ -1,26 +1,33 @@
 version: '3.8'
 
 services:
-  book-management-service:
-    build: .
+  mongodbBooks:
+    image: mongo:latest
+    container_name: mongodbBooks
     ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/bookdb
+      - "27017:27017"  # MongoDB port nastavljen na standardni 27017
+    command: ["mongod", "--bind_ip_all"]
+    volumes:
+      - mongodb_books_data:/data/db
     networks:
       - backend-network
 
-  mongo:
-    image: mongo:4.4.6
+  book-management-service:
+    build:
+      context: .  # Posodobite pot do mape, kjer je Dockerfile vaše Spring aplikacije
+      dockerfile: Dockerfile
+    container_name: book-management-service
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodbBooks:27017/booksdb  # URI za povezavo do MongoDB
     ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data_container:/data/db
+      - "8080:8080"
+    depends_on:
+      - mongodbBooks
     networks:
       - backend-network
 
 volumes:
-  mongodb_data_container:
+  mongodb_books_data:  # ločen volumen za podatke knjig
 
 networks:
   backend-network:
